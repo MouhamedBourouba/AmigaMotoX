@@ -21,33 +21,13 @@ bool isRunning = true;
 // Function prototypes
 SDL_Window *initialize();
 void        cleanup();
+bool        fetch_program(int argc, char **argv);
 
 int main(int argc, char *argv[]) {
-    FILE         *fhandle;
-    unsigned char rom[MAX_ROM + 1];
-
-    // Check command-line arguments
-    if (argc != 2) {
-        printf("Usage: %s <filename>\n", argv[0]);
-        return 1;
-    }
-
-    // Open and read the ROM file
-    if ((fhandle = fopen(argv[1], "rb")) == NULL) {
-        printf("Unable to open %s\n", argv[1]);
-        return 1;
-    }
-
-    if (fread(rom, 1, MAX_ROM + 1, fhandle) <= 0) {
-        printf("Error reading %s\n", argv[1]);
-        fclose(fhandle);
-        return 1;
-    }
-
-    fclose(fhandle);
-
-    // Initialize components
     initialize();
+
+    if (!fetch_program(argc, argv))
+        return 1;
 
     // Main loop
     SDL_Event event;
@@ -58,12 +38,34 @@ int main(int argc, char *argv[]) {
                     isRunning = false;
             }
         }
-        m68k_execute(100000);
+        m68k_execute(1);
     }
 
-    // Clean up and exit
     cleanup();
     return 0;
+}
+
+bool fetch_program(int argc, char **argv) {
+    FILE *fhandle;
+
+    if (argc != 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        return false;
+    }
+
+    if ((fhandle = fopen(argv[1], "rb")) == NULL) {
+        printf("Unable to open %s\n", argv[1]);
+        return false;
+    }
+
+    if (fread(rom, 1, MAX_ROM + 1, fhandle) <= 0) {
+        printf("Error reading %s\n", argv[1]);
+        fclose(fhandle);
+        return false;
+    }
+
+    fclose(fhandle);
+    return 1;
 }
 
 // Initialize components
@@ -78,7 +80,8 @@ SDL_Window *initialize() {
 }
 
 // Clean up resources
-void cleanup() {
+void cleanup(SDL_Window *window) {
+    SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
