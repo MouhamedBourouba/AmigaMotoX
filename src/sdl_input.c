@@ -20,6 +20,10 @@ void handel_keyboard_input() {
     }
 }
 
+void input_write(unsigned int v) {
+    (void)v;
+}
+
 // for debuging
 char poll_keyboard_input() {
     return 'g';

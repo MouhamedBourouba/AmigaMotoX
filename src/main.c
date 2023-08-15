@@ -11,7 +11,7 @@ unsigned char ram[MAX_RAM + 1];
 bool fetch_program(int argc, char **argv);
 
 int main(int argc, char *argv[]) {
-    if (!initialize_display() || !initialize_input() || !initialize_cpu())
+    if (!initialize_display() || !initialize_input() || !initialize_cpu() || !fetch_program(argc, argv))
         return 1;
 
     while (isDisplayRunning) {

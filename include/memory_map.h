@@ -1,6 +1,8 @@
 #ifndef MEMORY_MAP__HEADER
 #define MEMORY_MAP__HEADER
 
+#include <stdint.h>
+
 // THIS IS STILL TEMPORARY
 
 /* SERIAL PORT */
@@ -17,6 +19,6 @@
 #define SERIAL_STATUS_RDF_HI 0x7cfff
 
 #define MAX_ROM 0x0  // no ROM
-#define MAX_RAM 0xfffff
+#define MAX_RAM 0xffffff
 
 #endif

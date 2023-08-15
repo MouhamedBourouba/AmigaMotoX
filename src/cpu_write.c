@@ -19,41 +19,11 @@
 extern unsigned char ram[];
 
 void m68k_write_memory_8(unsigned int address, unsigned int value) {
-    if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
-        // CANT WRITE HERE;
-    } else if (address <= SERIAL_OUTPUT_ADDRESS_HI && address >= SERIAL_OUTPUT_ADDRESS_LO) {
-        write_char(value);
-    } else if (address <= SERIAL_STATUS_TXE_LO && address >= SERIAL_STATUS_TXE_HI) {
-        // CANT WRITE HERE;
-    } else if (address <= SERIAL_STATUS_RDF_HI && address >= SERIAL_STATUS_RDF_HI) {
-        // CANT WRITE HERE
-    } else {
-        WRITE_BYTE(ram, address, value);
-    }
+  
 }
 void m68k_write_memory_16(unsigned int address, unsigned int value) {
-    if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
-        // CANT WRITE HERE;
-    } else if (address <= SERIAL_OUTPUT_ADDRESS_HI && address >= SERIAL_OUTPUT_ADDRESS_LO) {
-        write_char(value);
-    } else if (address <= SERIAL_STATUS_TXE_LO && address >= SERIAL_STATUS_TXE_HI) {
-        // CANT WRITE HERE;
-    } else if (address <= SERIAL_STATUS_RDF_HI && address >= SERIAL_STATUS_RDF_HI) {
-        // CANT WRITE HERE
-    } else {
-        WRITE_WORD(ram, address, value);
-    }
+   
 }
 void m68k_write_memory_32(unsigned int address, unsigned int value) {
-    if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
-        // CANT WRITE HERE;
-    } else if (address <= SERIAL_OUTPUT_ADDRESS_HI && address >= SERIAL_OUTPUT_ADDRESS_LO) {
-        write_char(value);
-    } else if (address <= SERIAL_STATUS_TXE_LO && address >= SERIAL_STATUS_TXE_HI) {
-        // CANT WRITE HERE;
-    } else if (address <= SERIAL_STATUS_RDF_HI && address >= SERIAL_STATUS_RDF_HI) {
-        // CANT WRITE HERE
-    } else {
-        WRITE_LONG(ram, address, value);
-    }
+
 }
