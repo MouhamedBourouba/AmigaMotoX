@@ -11,6 +11,7 @@ set(SOURCES
    src/cpu_read.c
    src/cpu_write.c
    src/cpu.c
+   src/tty.c
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})

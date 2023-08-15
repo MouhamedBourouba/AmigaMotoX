@@ -8,3 +8,7 @@ bool initialize_cpu() {
     m68k_pulse_reset();
     return 1;
 }
+
+void execute(uint32_t cycels) {
+    m68k_execute(cycels);
+}

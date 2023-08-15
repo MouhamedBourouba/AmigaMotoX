@@ -20,10 +20,13 @@ void handel_keyboard_input() {
     }
 }
 
+// for debuging
 char poll_keyboard_input() {
+    return 'g';
+}
+bool is_input_queue_empty() {
     return false;
 }
-
-bool is_queue_keyboard_empty() {
-    return true;
+bool is_input_device_read() {
+    return SDL_WasInit(SDL_INIT_EVENTS);
 }

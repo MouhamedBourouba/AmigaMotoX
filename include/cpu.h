@@ -2,6 +2,7 @@
 #define CPU_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /* Read/Write macros */
 #define READ_BYTE(BASE, ADDR) (BASE)[ADDR]
@@ -27,5 +28,7 @@ void cpu_write_long(unsigned int address, unsigned int value);
 unsigned int cpu_read_byte(unsigned int address);
 unsigned int cpu_read_word(unsigned int address);
 unsigned int cpu_read_long(unsigned int address);
+
+void execute(uint32_t cycels);
 
 #endif  // CPU_H

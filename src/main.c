@@ -3,7 +3,6 @@
 #include "cpu.h"
 #include "display.h"
 #include "input.h"
-#include "m68k.h"
 #include "memory_map.h"
 
 bool          isDisplayRunning = false;
@@ -17,6 +16,7 @@ int main(int argc, char *argv[]) {
 
     while (isDisplayRunning) {
         handel_keyboard_input();
+        execute(10);
     }
 
     return 0;

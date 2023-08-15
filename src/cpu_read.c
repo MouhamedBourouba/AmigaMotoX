@@ -13,30 +13,42 @@
 extern unsigned char ram[];
 
 unsigned int m68k_read_memory_8(unsigned int address) {
-    if (address > MAX_RAM) {
-        SDL_Log("trying to read invalid memory address: %d", address);
-        return 0;
-    } else if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
+    if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
         return poll_keyboard_input();
     } else if (address <= SERIAL_STATUS_RDF_HI && address >= SERIAL_STATUS_RDF_HI) {
-        return is_queue_keyboard_empty() ? 1 : 0;
+        return is_input_queue_empty() ? 1 : 0;
     } else if (address <= SERIAL_STATUS_TXE_LO && address >= SERIAL_STATUS_TXE_HI) {
-        return isDisplayRunning;
+        return isDisplayRunning && is_input_device_read();
+    } else if (address > MAX_RAM) {
+        // SDL_LogError(0, "OUT OF BOUNDRY READ %d", address);
+        return 0;
     } else {
         return READ_BYTE(ram, address);
     }
 }
 unsigned int m68k_read_memory_16(unsigned int address) {
-    if (address > MAX_RAM) {
-        SDL_Log("trying to read nvalid memory address: %d", address);
+    if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
+        return poll_keyboard_input();
+    } else if (address <= SERIAL_STATUS_RDF_HI && address >= SERIAL_STATUS_RDF_HI) {
+        return is_input_queue_empty() ? 1 : 0;
+    } else if (address <= SERIAL_STATUS_TXE_LO && address >= SERIAL_STATUS_TXE_HI) {
+        return isDisplayRunning && is_input_device_read();
+    } else if (address > MAX_RAM) {
+        // SDL_LogError(0, "OUT OF BOUNDRY READ %d", address);
         return 0;
     } else {
         return READ_WORD(ram, address);
     }
 }
 unsigned int m68k_read_memory_32(unsigned int address) {
-    if (address > MAX_RAM) {
-        SDL_Log("trying to read nvalid memory address: %d", address);
+    if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
+        return poll_keyboard_input();
+    } else if (address <= SERIAL_STATUS_RDF_HI && address >= SERIAL_STATUS_RDF_HI) {
+        return is_input_queue_empty() ? 1 : 0;
+    } else if (address <= SERIAL_STATUS_TXE_LO && address >= SERIAL_STATUS_TXE_HI) {
+        return isDisplayRunning && is_input_device_read();
+    } else if (address > MAX_RAM) {
+        //  SDL_LogError(0, "OUT OF BOUNDRY READ %d", address);
         return 0;
     } else {
         return READ_LONG(ram, address);
