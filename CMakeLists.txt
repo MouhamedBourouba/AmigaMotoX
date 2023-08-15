@@ -12,6 +12,7 @@ set(SOURCES
    src/cpu_write.c
    src/cpu.c
    src/tty.c
+   src/memory_helper.c
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})

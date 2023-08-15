@@ -15,7 +15,7 @@
 
 extern unsigned char ram[];
 
-static uint32_t read_ram(uint32_t address, enum RamSize size) {
+static uint32_t read_ram(uint32_t address, enum MemoryBlock size) {
     if (address > MAX_RAM) {
         SDL_Log("Attempted to read from RAM address %08x", address);
         return 0;
@@ -37,7 +37,7 @@ static uint32_t read_serial_memory(uint32_t address, enum SerialStatus status) {
         case RDF:
             return is_input_queue_empty() ? 1 : 0;
         case TXE:
-            return (isDisplayRunning && is_input_queue_empty()) ? 0 : 1;
+            return 1;
         case INPUT:
             return poll_keyboard_input();
         case OUTPUT:
@@ -49,7 +49,7 @@ static uint32_t read_serial_memory(uint32_t address, enum SerialStatus status) {
     return 0;
 }
 
-static uint32_t read_memory(uint32_t address, enum RamSize size) {
+static uint32_t read_memory(uint32_t address, enum MemoryBlock size) {
     enum SerialStatus serialStatus = get_serial_status(address);
     if (serialStatus != OUT_OF_RANGE) {
         return read_serial_memory(address, serialStatus);
