@@ -2,7 +2,7 @@ Language:        Cpp
 BasedOnStyle:    Google
 IndentWidth:     4
 UseTab:          Never
-ColumnLimit:     125 
+ColumnLimit:     150 
 AccessModifierOffset: -4
 ConstructorInitializerIndentWidth: 4
 AlignConsecutiveAssignments: true

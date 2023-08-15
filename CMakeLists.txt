@@ -6,6 +6,11 @@ include_directories(include libmusashi/include)
 
 set(SOURCES
    src/main.c
+   src/sdl_display.c
+   src/sdl_input.c
+   src/cpu_read.c
+   src/cpu_write.c
+   src/cpu.c
 )
 
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
