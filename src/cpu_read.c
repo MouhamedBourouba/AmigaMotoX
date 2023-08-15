@@ -1,4 +1,5 @@
 #include <SDL_log.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include "display.h"
@@ -14,11 +15,12 @@
 
 extern unsigned char ram[];
 
-unsigned int read_ram(unsigned int address, enum RamSize size) {
+static uint32_t read_ram(uint32_t address, enum RamSize size) {
     if (address > MAX_RAM) {
         SDL_Log("Attempted to read from RAM address %08x", address);
         return 0;
     }
+
     switch (size) {
         case BYTE:
             return READ_BYTE(ram, address);
@@ -27,12 +29,11 @@ unsigned int read_ram(unsigned int address, enum RamSize size) {
         case LONG:
             return READ_LONG(ram, address);
     }
+    return 0;
 }
 
-unsigned int read_memory(unsigned int address, enum RamSize size) {
-    enum SerialStatus serialStatus = get_serial_status(address);
-    switch (serialStatus) {
-        // NOTE: 0 IS TRUE AND 1 IS FALSE WHEN DEALING WITH SERIAL STATUS FLAGS
+static uint32_t read_serial_memory(uint32_t address, enum SerialStatus status) {
+    switch (status) {
         case RDF:
             return is_input_queue_empty() ? 1 : 0;
         case TXE:
@@ -45,16 +46,25 @@ unsigned int read_memory(unsigned int address, enum RamSize size) {
         case OUT_OF_RANGE:
             break;
     }
+    return 0;
+}
 
+static uint32_t read_memory(uint32_t address, enum RamSize size) {
+    enum SerialStatus serialStatus = get_serial_status(address);
+    if (serialStatus != OUT_OF_RANGE) {
+        return read_serial_memory(address, serialStatus);
+    }
     return read_ram(address, size);
 }
 
 unsigned int m68k_read_memory_8(unsigned int address) {
     return read_memory(address, BYTE);
 }
+
 unsigned int m68k_read_memory_16(unsigned int address) {
     return read_memory(address, WORD);
 }
+
 unsigned int m68k_read_memory_32(unsigned int address) {
     return read_memory(address, LONG);
 }
