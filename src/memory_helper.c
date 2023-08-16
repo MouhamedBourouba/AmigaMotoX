@@ -1,17 +1,15 @@
 #include "memory_helper.h"
 
 uint8_t get_serial_status(uint32_t address) {
-    if (address <= SERIAL_INPUT_ADDRESS_HI && address >= SERIAL_INPUT_ADDRESS_LO) {
+    if (address >= SERIAL_INPUT_ADDRESS_LO && address <= SERIAL_INPUT_ADDRESS_HI) {
         return INPUT;
-    }
-    if (address <= SERIAL_OUTPUT_ADDRESS_HI && address >= SERIAL_OUTPUT_ADDRESS_LO) {
+    } else if (address >= SERIAL_OUTPUT_ADDRESS_LO && address <= SERIAL_OUTPUT_ADDRESS_HI) {
         return OUTPUT;
-    }
-    if (address <= SERIAL_STATUS_RDF_HI && address >= SERIAL_STATUS_RDF_LO) {
+    } else if (address >= SERIAL_STATUS_RDF_LO && address <= SERIAL_STATUS_RDF_HI) {
         return RDF;
-    }
-    if (address <= SERIAL_STATUS_TXE_HI && address >= SERIAL_STATUS_TXE_LO) {
+    } else if (address >= SERIAL_STATUS_TXE_LO && address <= SERIAL_STATUS_TXE_HI) {
         return TXE;
+    } else {
+        return OUT_OF_RANGE;
     }
-    return OUT_OF_RANGE;
 }

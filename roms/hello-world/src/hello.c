@@ -26,7 +26,7 @@ void myputs(const char *p)
 
 int main() {
 
-	myputs("hello world, plz work khalass i am tired of this shit");
+	myputs("hello world");
 	
 	
 	return 0;

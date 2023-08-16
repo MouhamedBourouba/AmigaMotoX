@@ -17,19 +17,21 @@
     (BASE)[(ADDR) + 1] = ((VAL) >> 16) & 0xff; \
     (BASE)[(ADDR) + 2] = ((VAL) >> 8) & 0xff;  \
     (BASE)[(ADDR) + 3] = (VAL)&0xff
+
 extern unsigned char ram[];
 
-static void write_serial_memory(uint32_t address, uint32_t value) {
-    SDL_Log("char: %c", value);
-    switch (get_serial_status(address)) { 
+static void write_serial_memory(enum SerialStatus serialStatus, uint32_t value) {
+    switch (serialStatus) {
         case OUTPUT:
             write_char(value);
             break;
-        case TXE:
+        case INPUT:
+            break;
+        case RDF:
             SDL_Log("TRING TO WRITE SERIAL FLAGS");
             break;
-        case INPUT:
-            SDL_Log("TRING TO WRITE INPUT");
+        case TXE:
+            SDL_Log("TRING TO WRITE SERIAL FLAGS");
             break;
         case OUT_OF_RANGE:
             break;
@@ -55,8 +57,10 @@ static void write_ram(uint32_t address, uint32_t value, enum MemoryBlock size) {
 }
 
 static void write_memory(uint32_t address, uint32_t value, enum MemoryBlock size) {
-    if (get_serial_status(address) != OUTPUT) {
-        write_serial_memory(address, value);
+    enum SerialStatus ss = get_serial_status(address);
+    if (ss != OUT_OF_RANGE) {
+        write_serial_memory(ss, value);
+        return;
     }
     write_ram(address, value, size);
 }

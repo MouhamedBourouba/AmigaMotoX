@@ -5,6 +5,7 @@
 #include "input.h"
 #include "memory_map.h"
 
+
 bool          isDisplayRunning = false;
 unsigned char ram[MAX_RAM + 1];
 

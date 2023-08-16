@@ -1,4 +1,5 @@
 #include <SDL_log.h>
+#include <m68k.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -10,8 +11,6 @@
 #define READ_BYTE(BASE, ADDR) (BASE)[ADDR]
 #define READ_WORD(BASE, ADDR) (((BASE)[ADDR] << 8) | (BASE)[(ADDR) + 1])
 #define READ_LONG(BASE, ADDR) (((BASE)[ADDR] << 24) | ((BASE)[(ADDR) + 1] << 16) | ((BASE)[(ADDR) + 2] << 8) | (BASE)[(ADDR) + 3])
-
-#include <m68k.h>
 
 extern unsigned char ram[];
 
@@ -37,7 +36,7 @@ static uint32_t read_serial_memory(uint32_t address, enum SerialStatus status) {
         case RDF:
             return is_input_queue_empty() ? 1 : 0;
         case TXE:
-            return 1;
+            return 0;
         case INPUT:
             return poll_keyboard_input();
         case OUTPUT:
