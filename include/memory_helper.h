@@ -1,6 +1,7 @@
 #ifndef MEMORY_HELPER_H
 #define MEMORY_HELPER_H
 
+#include <stdint.h>
 #include "memory_map.h"
 
 enum MemoryBlock {

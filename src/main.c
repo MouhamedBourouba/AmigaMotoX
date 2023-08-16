@@ -1,25 +1,39 @@
-#include <stdio.h>
+
+#include <SDL_timer.h>
 
 #include "cpu.h"
 #include "display.h"
 #include "input.h"
 #include "memory_map.h"
-
+#include "tty.h"
 
 bool          isDisplayRunning = false;
 unsigned char ram[MAX_RAM + 1];
-
-bool fetch_program(int argc, char **argv);
+bool          fetch_program(int argc, char **argv);
 
 int main(int argc, char *argv[]) {
-    if (!initialize_display() || !initialize_input() || !initialize_cpu() || !fetch_program(argc, argv))
-        return 1;
+    if (!initialize_display() || !initialize_input() || !initialize_cpu() || !initialize_tty() || !fetch_program(argc, argv)) return 1;
 
-    while (isDisplayRunning) {
-        handel_keyboard_input();
-        execute(10);
-    }
+    write_char('g');
+    write_char('g');
+    write_char('g');
+    write_char('\n');
+    write_char('g');
+    write_char('g');
+    write_char('g');
+    write_char('\n');
+    write_char('g');
+    write_char('g');
+    write_char('g');
+    write_char('\n');
+    write_char('g');
+    write_char('g');
+    write_char('g');
+    write_char('g');
 
+    present_buffer();
+
+    SDL_Delay(30 * 1000);
     return 0;
 }
 
@@ -41,7 +55,6 @@ bool fetch_program(int argc, char **argv) {
         fclose(fhandle);
         return false;
     }
-
     fclose(fhandle);
     return 1;
 }

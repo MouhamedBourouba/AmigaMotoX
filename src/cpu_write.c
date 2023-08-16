@@ -20,7 +20,7 @@
 
 extern unsigned char ram[];
 
-static void write_serial_memory(enum SerialStatus serialStatus, uint32_t value) {
+static inline void write_serial_memory(enum SerialStatus serialStatus, uint32_t value) {
     switch (serialStatus) {
         case OUTPUT:
             write_char(value);
@@ -38,7 +38,7 @@ static void write_serial_memory(enum SerialStatus serialStatus, uint32_t value) 
     }
 }
 
-static void write_ram(uint32_t address, uint32_t value, enum MemoryBlock size) {
+static inline void write_ram(uint32_t address, uint32_t value, enum MemoryBlock size) {
     if (address > MAX_RAM) {
         SDL_Log("Attempted to write to RAM address %08x", address);
         return;
@@ -56,7 +56,7 @@ static void write_ram(uint32_t address, uint32_t value, enum MemoryBlock size) {
     }
 }
 
-static void write_memory(uint32_t address, uint32_t value, enum MemoryBlock size) {
+static inline void write_memory(uint32_t address, uint32_t value, enum MemoryBlock size) {
     enum SerialStatus ss = get_serial_status(address);
     if (ss != OUT_OF_RANGE) {
         write_serial_memory(ss, value);

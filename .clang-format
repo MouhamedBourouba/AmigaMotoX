@@ -9,10 +9,10 @@ AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
 AlignAfterOpenBracket: AlwaysBreak
 AllowAllArgumentsOnNextLine: false
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: true
 AllowShortBlocksOnASingleLine: Never
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
 IndentCaseLabels: true
 IndentCaseBlocks: true
 IndentGotoLabels: true

@@ -1,6 +1,7 @@
 #include "cpu.h"
 
 #include <m68k.h>
+#include <stdio.h>
 
 bool initialize_cpu() {
     m68k_set_cpu_type(M68K_CPU_TYPE_68000);
