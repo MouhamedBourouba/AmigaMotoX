@@ -57,7 +57,12 @@ int main(int argc, char *argv[]) {
 bool fetch_program(int argc, char **argv) {
     FILE *fhandle;
 
-    if ((fhandle = fopen("basic.bin", "rb")) == NULL) {
+    if (argc < 2) {
+        printf("Usage: %s <filename>\n", argv[0]);
+        return false;
+    }
+
+    if ((fhandle = fopen(argv[1], "rb")) == NULL) {
         printf("Unable to open %s\n", argv[1]);
         return false;
     }
