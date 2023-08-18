@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(M68K_EMU)
 
+add_compile_options(-Wall -Wextra -DDEBUG)
+
 find_package(SDL2 REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
@@ -27,3 +29,4 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     -lSDL2_ttf
     ${CMAKE_SOURCE_DIR}/libmusashi/libmusashi.a
 )
+

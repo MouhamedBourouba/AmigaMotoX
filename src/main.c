@@ -1,5 +1,6 @@
 
 #include <SDL_timer.h>
+#include <stdint.h>
 
 #include "cpu.h"
 #include "display.h"
@@ -7,45 +8,56 @@
 #include "memory_map.h"
 #include "tty.h"
 
+#define M68K_CLOCK_SPEED 100000
+
 bool          isDisplayRunning = false;
 unsigned char ram[MAX_RAM + 1];
 bool          fetch_program(int argc, char **argv);
+extern bool   isTtyBufferChanged;
+
+void cap_fps(uint32_t startTime) {
+    int frameRemaningTime = SDL_GetTicks() - startTime;
+    if (frameRemaningTime > 0) {
+        SDL_Delay(frameRemaningTime);
+    }
+}
+
+void present_renderer_if_changed() {
+    if (isTtyBufferChanged) {
+        isTtyBufferChanged = false;
+        present_renderer();
+    }
+}
+
+void cleanup() {
+    close_tty();
+    close_display();
+}
 
 int main(int argc, char *argv[]) {
-    if (!initialize_display() || !initialize_input() || !initialize_cpu() || !initialize_tty() || !fetch_program(argc, argv)) return 1;
+    bool fieldToInit = !initialize_display() || !initialize_input() || !initialize_cpu() || !initialize_tty() ||
+                       !fetch_program(argc, argv);
 
-    write_char('g');
-    write_char('g');
-    write_char('g');
-    write_char('\n');
-    write_char('g');
-    write_char('g');
-    write_char('g');
-    write_char('\n');
-    write_char('g');
-    write_char('g');
-    write_char('g');
-    write_char('\n');
-    write_char('g');
-    write_char('g');
-    write_char('g');
-    write_char('g');
+    if (fieldToInit) return 1;
 
-    present_buffer();
+    while (isDisplayRunning) {
+        uint32_t startTime = SDL_GetTicks();
+        handel_keyboard_input();
+        execute(M68K_CLOCK_SPEED);
+        SDL_Log("time: %d", startTime);
+        cap_fps(startTime);
+        present_renderer_if_changed();
+    }
 
-    SDL_Delay(30 * 1000);
+    cleanup();
+
     return 0;
 }
 
 bool fetch_program(int argc, char **argv) {
     FILE *fhandle;
 
-    if (argc != 2) {
-        printf("Usage: %s <filename>\n", argv[0]);
-        return false;
-    }
-
-    if ((fhandle = fopen(argv[1], "rb")) == NULL) {
+    if ((fhandle = fopen("basic.bin", "rb")) == NULL) {
         printf("Unable to open %s\n", argv[1]);
         return false;
     }
