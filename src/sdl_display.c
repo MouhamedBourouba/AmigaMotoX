@@ -10,6 +10,7 @@
 
 SDL_Window   *window;
 SDL_Renderer *renderer;
+SDL_Color     background;
 
 bool initialize_display() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
@@ -19,7 +20,7 @@ bool initialize_display() {
     renderer         = SDL_CreateRenderer(window, -1, 0);
     bool success     = window != NULL && renderer != NULL;
     isDisplayRunning = success;
-    
+
     return success;
 }
 
@@ -31,6 +32,7 @@ void draw_pixel_to_buffer(Position pos, SDL_Color c) {
 }
 
 void set_backgroud_color(SDL_Color bc) {
+    background = bc;
     SDL_SetRenderDrawColor(renderer, bc.r, bc.g, bc.b, bc.a);
     SDL_RenderClear(renderer);
 }

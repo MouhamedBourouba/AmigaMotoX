@@ -1,92 +1,84 @@
 #include "tty.h"
 
-#include <SDL2/SDL_ttf.h>
-#include <SDL_log.h>
-#include <SDL_pixels.h>
-#include <SDL_rect.h>
-#include <SDL_render.h>
-#include <SDL_stdinc.h>
-#include <SDL_surface.h>
-#include <SDL_timer.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include <SDL_events.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <termios.h>
+#include <unistd.h>
+#include <signal.h>
 
 #include "display.h"
+#include "queue.h"
 
-SDL_Color            textColor        = {0xFF, 0xFF, 0xFF, 0xFF};
-SDL_Rect             currentCursorPos = {0, 0, CHAR_WIDTH, CHAR_HIGHT};
-int                  maxCharPerLine   = WINDOW_WIDTH / CHAR_WIDTH;
-static TTF_Font     *font;
-extern SDL_Renderer *renderer;
-bool                 isTtyBufferChanged = false;
+#define QUEUE_SIZE 100
 
-struct CharBuffer {
-    char    *buff;
-    uint32_t index;
-} charBuffer;
+struct Queue* inputQueue;
 
-Uint32 cursor_blink_callback(Uint32 interval, void *p) {
-    blinkCursor();
-    return interval;
-}
-
-SDL_TimerID cursorBlinkCallbackID;
+struct termios oldtio, newtio;
 
 bool initialize_tty() {
-    bool failed_init = (TTF_Init() < 0);
-    font             = TTF_OpenFont(FONT_PATH, 40);
+    tcgetattr(STDIN_FILENO, &oldtio);
+    tcgetattr(STDIN_FILENO, &newtio);
+    newtio.c_lflag &= ~(ECHO | ECHONL | ECHOCTL | ICANON);
+    newtio.c_cc[VTIME] = 0;
+    newtio.c_cc[VMIN]  = 1;
+    // cfmakeraw(&newtio); // use this instead of the three lines above if you want the VM to be able to output CR and
+    // LF independently
+    if (tcsetattr(STDIN_FILENO, TCSANOW, &newtio) < 0) {
+        printf("error setting terminal");
+    }
 
-    if (failed_init) SDL_LogError(0, "cant init ttf");
-    if (font == NULL) SDL_LogError(0, "cant open font path: %s", FONT_PATH);
+    // remove buffers from stdin & stdout
+    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
 
-    charBuffer.buff  = malloc(CHAR_BUFFER);
-    charBuffer.index = 0;
+    // ignore SIGINT
+    signal(SIGINT, SIG_IGN);
+    inputQueue = newQueue(QUEUE_SIZE);
 
-    cursorBlinkCallbackID = SDL_AddTimer(CURSOR_BLINK_RATE, cursor_blink_callback, NULL);
-
-    return !failed_init && font != NULL;
+    return 1;
 }
 
-void inline blinkCursor() {
-    static bool blink = false;
-    SDL_SetRenderDrawColor(renderer, blink ? 255 : 0, blink ? 255 : 0, blink ? 255 : 0, blink ? 255 : 0);
-    SDL_RenderFillRect(renderer, &currentCursorPos);
-    blink              = !blink;
-    isTtyBufferChanged = true;
+int kbhit(void) {
+    struct timeval tv;
+    fd_set         rdfs;
+
+    tv.tv_sec  = 0;
+    tv.tv_usec = 0;
+
+    FD_ZERO(&rdfs);
+    FD_SET(STDIN_FILENO, &rdfs);
+
+    select(STDIN_FILENO + 1, &rdfs, NULL, NULL, &tv);
+    return FD_ISSET(STDIN_FILENO, &rdfs);
 }
 
-void write_char(char c) {
-    isTtyBufferChanged              = true;
-    uint16_t currentCharIndexInLine = (charBuffer.index % maxCharPerLine);
-
-    if (c == '\n') {
-        currentCursorPos.y = +currentCursorPos.y + CHAR_HIGHT;
-        currentCursorPos.x = 0;
-        charBuffer.index   = charBuffer.index + (maxCharPerLine - currentCharIndexInLine);
+void tty_input_write(char ch) {
+    if (ch == 10) {
         return;
     }
-    charBuffer.buff[charBuffer.index++] = c;
-    char         str[2]                 = {c, '\0'};
-    SDL_Surface *surface                = TTF_RenderText_Solid(font, str, textColor);
-    SDL_Texture *texture                = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_RenderCopy(renderer, texture, NULL, &currentCursorPos);
+    printf("%c", ch);
+    fflush(stdout);
+}
 
-    currentCursorPos.x = currentCursorPos.x + CHAR_WIDTH;
+void tty_handle_input() {
+    if (kbhit()) {
+        char* ch = malloc(sizeof(char));
+        *(ch)    = getchar();
+        enqueue(inputQueue, ch);
+    }
 
-    if (currentCharIndexInLine >= (maxCharPerLine - 1)) {
-        currentCursorPos.y = currentCursorPos.y + CHAR_HIGHT;
-        currentCursorPos.x = 0;
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+            case SDL_QUIT:
+                isDisplayRunning = false;
+        }
     }
 }
 
-void set_text_color(SDL_Color c) { textColor = c; }
+char tty_get_char() { return *((char*)dequeue(inputQueue)); }
 
-void close_tty() {
-    free(charBuffer.buff);
-    TTF_CloseFont(font);
-    TTF_Quit();
-}
+bool tty_is_char_available() { return !isQueueEmpty(inputQueue); }
+
+bool tty_is_input_device_ready() { return 1; }

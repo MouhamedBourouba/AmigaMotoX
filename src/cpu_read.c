@@ -4,13 +4,14 @@
 #include <stdio.h>
 
 #include "display.h"
-#include "input.h"
 #include "memory_helper.h"
 #include "memory_map.h"
+#include "tty.h"
 
 #define READ_BYTE(BASE, ADDR) (BASE)[ADDR]
 #define READ_WORD(BASE, ADDR) (((BASE)[ADDR] << 8) | (BASE)[(ADDR) + 1])
-#define READ_LONG(BASE, ADDR) (((BASE)[ADDR] << 24) | ((BASE)[(ADDR) + 1] << 16) | ((BASE)[(ADDR) + 2] << 8) | (BASE)[(ADDR) + 3])
+#define READ_LONG(BASE, ADDR) \
+    (((BASE)[ADDR] << 24) | ((BASE)[(ADDR) + 1] << 16) | ((BASE)[(ADDR) + 2] << 8) | (BASE)[(ADDR) + 3])
 
 extern unsigned char ram[];
 
@@ -28,17 +29,18 @@ static inline uint32_t read_ram(uint32_t address, enum MemoryBlock size) {
         case LONG:
             return READ_LONG(ram, address);
     }
+
     return 0;
 }
 
 static inline uint32_t read_serial_memory(uint32_t address, enum SerialStatus status) {
     switch (status) {
         case RDF:
-            return is_input_queue_empty();
+            return !tty_is_char_available();
         case TXE:
             return !isDisplayRunning;
         case INPUT:
-            return poll_keyboard_input();
+            return tty_get_char();
         case OUTPUT:
             // who will read the output .... ;)
             return 0;
@@ -56,14 +58,8 @@ static inline uint32_t read_memory(uint32_t address, enum MemoryBlock size) {
     return read_ram(address, size);
 }
 
-unsigned int m68k_read_memory_8(unsigned int address) {
-    return read_memory(address, BYTE);
-}
+unsigned int m68k_read_memory_8(unsigned int address) { return read_memory(address, BYTE); }
 
-unsigned int m68k_read_memory_16(unsigned int address) {
-    return read_memory(address, WORD);
-}
+unsigned int m68k_read_memory_16(unsigned int address) { return read_memory(address, WORD); }
 
-unsigned int m68k_read_memory_32(unsigned int address) {
-    return read_memory(address, LONG);
-}
+unsigned int m68k_read_memory_32(unsigned int address) { return read_memory(address, LONG); }

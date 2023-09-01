@@ -1,10 +1,10 @@
 #include <SDL_log.h>
+#include <SDL_timer.h>
+#include <curses.h>
 #include <m68k.h>
-#include <stdint.h>
 
 #include "cpu.h"
 #include "display.h"
-#include "input.h"
 #include "memory_helper.h"
 #include "tty.h"
 
@@ -23,7 +23,11 @@ extern unsigned char ram[];
 static inline void write_serial_memory(enum SerialStatus serialStatus, uint32_t value) {
     switch (serialStatus) {
         case OUTPUT:
-            write_char(value);
+            if (value == 10) {
+                fprintf(stdout, "\n");
+            } else {
+                fprintf(stdout, "%c", value);
+            }
             break;
         case INPUT:
             break;
@@ -65,12 +69,6 @@ static inline void write_memory(uint32_t address, uint32_t value, enum MemoryBlo
     write_ram(address, value, size);
 }
 
-void m68k_write_memory_8(unsigned int address, unsigned int value) {
-    write_memory(address, value, BYTE);
-}
-void m68k_write_memory_16(unsigned int address, unsigned int value) {
-    write_memory(address, value, WORD);
-}
-void m68k_write_memory_32(unsigned int address, unsigned int value) {
-    write_memory(address, value, LONG);
-}
+void m68k_write_memory_8(unsigned int address, unsigned int value) { write_memory(address, value, BYTE); }
+void m68k_write_memory_16(unsigned int address, unsigned int value) { write_memory(address, value, WORD); }
+void m68k_write_memory_32(unsigned int address, unsigned int value) { write_memory(address, value, LONG); }

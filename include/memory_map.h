@@ -18,6 +18,10 @@
 #define SERIAL_STATUS_RDF_LO 0x7c000
 #define SERIAL_STATUS_RDF_HI 0x7cfff
 
+#define MAX_VRAM 1024 * 1
+#define VRAM_LOW 0x0E00000
+#define VRAM_HIGH 0x0F00000
+
 #define MAX_ROM 0x0  // no ROM
 #define MAX_RAM 0xffffff
 

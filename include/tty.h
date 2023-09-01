@@ -1,19 +1,13 @@
 #ifndef TTY_H
 #define TTY_H
 
-#include "display.h"
-
-#define FONT_PATH "../data/bit-font/bitOperatorPlus-Regular.ttf"
-#define CHAR_BUFFER 1024 * 4 /* 4 MB */
-#define CHAR_WIDTH 15
-#define CHAR_HIGHT 30
-#define CURSOR_BLINK_RATE 500
-
 #include <stdbool.h>
 
 bool initialize_tty();
-void write_char(char c);
-void close_tty();
-void blinkCursor();
+void tty_handle_input();
+char tty_get_char();
+bool tty_is_char_available();
+bool tty_is_input_device_ready();
+void tty_input_write(char ch);
 
 #endif
