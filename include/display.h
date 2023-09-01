@@ -18,10 +18,10 @@ typedef struct {
 
 extern bool isDisplayRunning;
 
-bool initialize_display();
-void close_display();
-void draw_pixel_to_buffer(Position pos, SDL_Color c);
-void set_backgroud_color(SDL_Color bc);
-void present_renderer();
+bool display_initialize();
+void display_close();
+void display_draw_pixel(Position pos, SDL_Color c);
+void display_change_bc(SDL_Color bc);
+void display_present_frame_buffer();
 
 #endif

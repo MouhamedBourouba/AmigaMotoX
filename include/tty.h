@@ -3,7 +3,8 @@
 
 #include <stdbool.h>
 
-bool initialize_tty();
+bool tty_initialize();
+void tty_close();
 void tty_handle_input();
 char tty_get_char();
 bool tty_is_char_available();

@@ -16,7 +16,7 @@ struct Queue* inputQueue;
 
 struct termios oldtio, newtio;
 
-bool initialize_tty() {
+bool tty_initialize() {
     tcgetattr(STDIN_FILENO, &oldtio);
     tcgetattr(STDIN_FILENO, &newtio);
     newtio.c_lflag &= ~(ECHO | ECHONL | ECHOCTL | ICANON);

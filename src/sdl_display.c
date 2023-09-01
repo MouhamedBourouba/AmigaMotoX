@@ -12,7 +12,7 @@ SDL_Window   *window;
 SDL_Renderer *renderer;
 SDL_Color     background;
 
-bool initialize_display() {
+bool display_initialize() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
 
     window = SDL_CreateWindow(
@@ -24,14 +24,14 @@ bool initialize_display() {
     return success;
 }
 
-void present_renderer() { SDL_RenderPresent(renderer); }
+void display_present_frame_buffer() { SDL_RenderPresent(renderer); }
 
-void draw_pixel_to_buffer(Position pos, SDL_Color c) {
+void display_draw_pixel(Position pos, SDL_Color c) {
     SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
     SDL_RenderDrawPoint(renderer, pos.x, pos.y);
 }
 
-void set_backgroud_color(SDL_Color bc) {
+void display_change_bc(SDL_Color bc) {
     background = bc;
     SDL_SetRenderDrawColor(renderer, bc.r, bc.g, bc.b, bc.a);
     SDL_RenderClear(renderer);
@@ -42,7 +42,7 @@ void clear_display() {
     SDL_RenderClear(renderer);
 }
 
-void close_display() {
+void display_close() {
     isDisplayRunning = false;
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);

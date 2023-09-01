@@ -17,10 +17,10 @@ bool isDisplayRunning = false;
 
 bool fetch_program(int argc, char **argv);
 void cap_fps(uint32_t startTime);
-void cleanup() { close_display(); }
+void cleanup() { display_close(); }
 
 int main(int argc, char *argv[]) {
-    bool fieldToInit = !initialize_display() || !initialize_tty() || !initialize_cpu() || !fetch_program(argc, argv);
+    bool fieldToInit = !display_initialize() || !tty_initialize() || !initialize_cpu() || !fetch_program(argc, argv);
 
     if (fieldToInit) return 1;
 
