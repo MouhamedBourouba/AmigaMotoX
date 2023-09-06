@@ -1,7 +1,6 @@
-#include <SDL_log.h>
 #include <SDL_timer.h>
-#include <curses.h>
 #include <m68k.h>
+#include <stdio.h>
 
 #include "cpu.h"
 #include "display.h"
@@ -23,20 +22,10 @@ extern unsigned char ram[];
 static inline void write_serial_memory(enum SerialStatus serialStatus, uint32_t value) {
     switch (serialStatus) {
         case OUTPUT:
-            if (value == 10) {
-                fprintf(stdout, "\n");
-            } else {
-                fprintf(stdout, "%c", value);
-            }
-            break;
+            tty_write(value);
         case INPUT:
-            break;
         case RDF:
-            SDL_Log("TRING TO WRITE SERIAL FLAGS");
-            break;
         case TXE:
-            SDL_Log("TRING TO WRITE SERIAL FLAGS");
-            break;
         case OUT_OF_RANGE:
             break;
     }
@@ -44,7 +33,7 @@ static inline void write_serial_memory(enum SerialStatus serialStatus, uint32_t 
 
 static inline void write_ram(uint32_t address, uint32_t value, enum MemoryBlock size) {
     if (address > MAX_RAM) {
-        SDL_Log("Attempted to write to RAM address %08x", address);
+        fprintf(stderr, "ERROR: Attempted to write to RAM address %08x", address);
         return;
     }
     switch (size) {

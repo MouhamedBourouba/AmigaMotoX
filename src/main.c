@@ -1,5 +1,3 @@
-
-#include <curses.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -26,8 +24,9 @@ int main(int argc, char *argv[]) {
 
     while (1) {
         uint32_t startTime = SDL_GetTicks();
-        tty_handle_input();
         execute(M68K_CLOCK_SPEED);
+        tty_update();
+        display_update();
         cap_fps(startTime);
     }
 
@@ -62,4 +61,11 @@ bool fetch_program(int argc, char **argv) {
     }
     fclose(fhandle);
     return 1;
+}
+
+void close_emu(char *fmt) {
+    display_close();
+    tty_close();
+    fprintf(stderr, "%s\n", fmt);
+    exit(EXIT_FAILURE);
 }

@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/mouhamed/dev/m68k_emu",
+    "file": "src/cpu.c",
+    "command": "clang -g -Wall -L libmusashi/  -I include/ -I libmusashi/include  -I/usr/include/SDL2 -D_REENTRANT  -o sim src/cpu.c src/cpu_read.c src/cpu_write.c src/main.c src/memory_helper.c src/queue.c src/sdl_display.c src/tty.c -lSDL2  -lmusashi"
+  }
+]

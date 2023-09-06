@@ -13,6 +13,8 @@
 #define READ_LONG(BASE, ADDR) \
     (((BASE)[ADDR] << 24) | ((BASE)[(ADDR) + 1] << 16) | ((BASE)[(ADDR) + 2] << 8) | (BASE)[(ADDR) + 3])
 
+extern int           kbhit(void);
+extern int           input_get_char();
 extern unsigned char ram[];
 
 static inline uint32_t read_ram(uint32_t address, enum MemoryBlock size) {
@@ -29,21 +31,19 @@ static inline uint32_t read_ram(uint32_t address, enum MemoryBlock size) {
         case LONG:
             return READ_LONG(ram, address);
     }
-
+    
     return 0;
 }
 
 static inline uint32_t read_serial_memory(uint32_t address, enum SerialStatus status) {
     switch (status) {
         case RDF:
-            return !tty_is_char_available();
-        case TXE:
-            return !isDisplayRunning;
+            return !kbhit();
         case INPUT:
-            return tty_get_char();
-        case OUTPUT:
-            // who will read the output .... ;)
+            return input_get_char();
+        case TXE:
             return 0;
+        case OUTPUT:
         case OUT_OF_RANGE:
             break;
     }
@@ -59,7 +59,5 @@ static inline uint32_t read_memory(uint32_t address, enum MemoryBlock size) {
 }
 
 unsigned int m68k_read_memory_8(unsigned int address) { return read_memory(address, BYTE); }
-
 unsigned int m68k_read_memory_16(unsigned int address) { return read_memory(address, WORD); }
-
 unsigned int m68k_read_memory_32(unsigned int address) { return read_memory(address, LONG); }

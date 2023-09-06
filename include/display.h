@@ -19,9 +19,8 @@ typedef struct {
 extern bool isDisplayRunning;
 
 bool display_initialize();
+bool display_create_window();
+void display_update();
 void display_close();
-void display_draw_pixel(Position pos, SDL_Color c);
-void display_change_bc(SDL_Color bc);
-void display_present_frame_buffer();
 
 #endif
