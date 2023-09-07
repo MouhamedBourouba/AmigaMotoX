@@ -1,44 +1,38 @@
-#include <stdint.h>
 #include <stdio.h>
 
-#include "cpu.h"
+#include "constants.h"
 #include "display.h"
+#include "m68k.h"
 #include "memory_map.h"
 #include "tty.h"
 
-#define M68K_CLOCK_SPEED 100000
-
 unsigned char ram[MAX_RAM];
-unsigned char vram[MAX_VRAM];
+unsigned char vram[WINDOW_HIGHT * WINDOW_WIDTH];
 
-bool isDisplayRunning = false;
+bool running = false;
 
 bool fetch_program(int argc, char **argv);
-void cap_fps(uint32_t startTime);
-void cleanup() { display_close(); }
+void testFB();
+
+extern void execute(uint32_t cycels);
+extern bool initialize_cpu();
 
 int main(int argc, char *argv[]) {
-    bool fieldToInit = !display_initialize() || !tty_initialize() || !initialize_cpu() || !fetch_program(argc, argv);
+    if (!initialize_cpu() || !display_initialize() || !tty_initialize() || !fetch_program(argc, argv)) {
+        fprintf(stderr, "ERROR: initializing\n");
+        return 1;
+    }
 
-    if (fieldToInit) return 1;
+    display_create_window();
 
-    while (1) {
-        uint32_t startTime = SDL_GetTicks();
+    while (running) {
         execute(M68K_CLOCK_SPEED);
-        tty_update();
         display_update();
-        cap_fps(startTime);
     }
 
-    cleanup();
+    display_close();
+    tty_close();
     return 0;
-}
-
-void cap_fps(uint32_t startTime) {
-    int frameRemaningTime = SDL_GetTicks() - startTime;
-    if (frameRemaningTime > 0) {
-        SDL_Delay(frameRemaningTime);
-    }
 }
 
 bool fetch_program(int argc, char **argv) {
@@ -61,11 +55,4 @@ bool fetch_program(int argc, char **argv) {
     }
     fclose(fhandle);
     return 1;
-}
-
-void close_emu(char *fmt) {
-    display_close();
-    tty_close();
-    fprintf(stderr, "%s\n", fmt);
-    exit(EXIT_FAILURE);
 }

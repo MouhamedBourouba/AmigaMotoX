@@ -1,3 +1,7 @@
 .cache
 build
-.clang-formate
+.clang-format
+sim
+.idea
+basic.bin
+compile_commands.json

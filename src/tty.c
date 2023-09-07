@@ -3,16 +3,12 @@
 #include <SDL_events.h>
 #include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
 
 #include "display.h"
-#include "queue.h"
 
 #define QUEUE_SIZE 100
-
-struct Queue* inputQueue;
 
 struct termios oldtio, newtio;
 

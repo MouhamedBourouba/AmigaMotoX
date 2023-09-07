@@ -1,11 +1,7 @@
-#ifndef MEMORY_MAP__HEADER
-#define MEMORY_MAP__HEADER
+#pragma once
 
 #include <stdint.h>
 
-// THIS IS STILL TEMPORARY
-
-/* SERIAL PORT */
 #define SERIAL_INPUT_ADDRESS_LO 0x78000
 #define SERIAL_INPUT_ADDRESS_HI 0x79fff
 
@@ -22,7 +18,4 @@
 #define VRAM_LOW 0x0E00000
 #define VRAM_HIGH 0x0F00000
 
-#define MAX_ROM 0x0  // no ROM
 #define MAX_RAM 0xffffff
-
-#endif
